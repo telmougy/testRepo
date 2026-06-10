@@ -1,0 +1,19 @@
+{
+  "name": "anagram-assessment",
+  "version": "1.0.0",
+  "description": "isAnagram implementation with a comprehensive Playwright Test suite and GitHub Actions CI",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "author": "Tarek Elmougy",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.2",
+    "fast-check": "^4.8.0",
+    "typescript": "^6.0.3"
+  }
+}
