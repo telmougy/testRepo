@@ -82,3 +82,5 @@ tests/*.spec.ts         six-layer test suite (see table above)
 playwright.config.ts    pure-Node runner config
 .github/workflows/ci.yml
 ```
+
+<!-- CI verification: confirms the pull_request trigger runs the suite. -->
