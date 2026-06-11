@@ -10,15 +10,14 @@ test.describe('isAnagram — performance sanity', () => {
   const SIZE = 1_000_000;
   const BUDGET_MS = 2_000;
 
+  let cached: { a: string; b: string } | undefined;
   function buildPair(): { a: string; b: string } {
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-    const chars: string[] = [];
-    for (let i = 0; i < SIZE; i++) {
-      chars.push(alphabet[i % alphabet.length]!);
+    if (!cached) {
+      const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+      const a = alphabet.repeat(Math.ceil(SIZE / alphabet.length)).slice(0, SIZE);
+      cached = { a, b: [...a].reverse().join('') };
     }
-    const a = chars.join('');
-    const b = chars.reverse().join('');
-    return { a, b };
+    return cached;
   }
 
   test(`confirms a ${SIZE.toLocaleString()}-char anagram within ${BUDGET_MS}ms`, () => {

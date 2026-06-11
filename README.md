@@ -10,7 +10,7 @@ every push and pull request.
 npm ci          # install dependencies
 npm test        # run the full test suite (Playwright Test, pure Node — no browsers)
 npm run typecheck
-npm run test:report   # open the HTML report after a CI-style run
+npm run test:report   # open the HTML report after a run
 ```
 
 ## Anagram policy
