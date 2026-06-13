@@ -16,16 +16,15 @@ npm run typecheck # type-check with tsc
 Two strings are anagrams when they contain the same characters with the same
 multiplicities, in any order.
 
-- Case-insensitive (`'Listen'` vs `'Silent'` → `true`).
+- Case-sensitive (`'Listen'` vs `'Silent'` → `false`).
 - Whitespace and punctuation count as characters.
 - Characters are compared by Unicode **code point**, so emoji and other
   astral-plane characters are handled correctly (never split into surrogate halves).
 - Non-string input throws a `TypeError`.
 
-The implementation is O(n): it builds a per-character lower-cased code-point
-frequency map for each input and compares them. Case is folded per character
-(not on the whole string) so matching depends only on the multiset of
-characters, never their order.
+The implementation is O(n): it builds a code-point frequency map for each input
+and compares them, so matching depends only on the multiset of characters,
+never their order.
 
 ## Tests
 

@@ -36,8 +36,8 @@ test.describe('isAnagram — edge cases', () => {
 });
 
 test.describe('isAnagram — default policies', () => {
-  test('is case-insensitive', () => {
-    expect(isAnagram('Listen', 'Silent')).toBe(true);
+  test('is case-sensitive', () => {
+    expect(isAnagram('Listen', 'Silent')).toBe(false);
   });
 
   test('counts whitespace as characters', () => {

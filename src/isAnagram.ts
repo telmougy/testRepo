@@ -1,15 +1,10 @@
-/**
- * Count how many times each character appears in `text`, lower-cased so that
- * matching ignores letter case.
- */
+/** Count how many times each character appears in `text`. */
 function countCharacters(text: string): Map<string, number> {
   const characterCounts = new Map<string, number>();
 
   for (const character of text) {
-    for (const lowercaseCharacter of character.toLowerCase()) {
-      const currentCount = characterCounts.get(lowercaseCharacter) ?? 0;
-      characterCounts.set(lowercaseCharacter, currentCount + 1);
-    }
+    const currentCount = characterCounts.get(character) ?? 0;
+    characterCounts.set(character, currentCount + 1);
   }
 
   return characterCounts;
@@ -34,8 +29,12 @@ function haveSameCharacterCounts(
 
 /**
  * Return true when both strings contain the same characters with the same
- * counts, regardless of order or letter case. Whitespace and punctuation are
- * treated as normal characters.
+ * counts, in any order.
+ *
+ * Matching is case-sensitive; whitespace and punctuation count as characters.
+ * Characters are compared by Unicode code point, so astral-plane characters
+ * such as emoji are handled correctly.
+ *
  * @throws {TypeError} When either argument is not a string.
  */
 export function isAnagram(first: string, second: string): boolean {
