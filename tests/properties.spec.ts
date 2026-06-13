@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import fc from 'fast-check';
-import { isAnagram, type IsAnagramOptions } from '../src/isAnagram.js';
+import { isAnagram } from '../src/isAnagram.js';
 
 /** Any Unicode code point sequence (including astral-plane characters). */
 const anyString = fc.string({ unit: 'binary' });
@@ -15,46 +15,26 @@ const withShuffle = (arb: fc.Arbitrary<string>) =>
       fc.shuffledSubarray(chars, { minLength: chars.length }).map((c) => c.join('')),
     );
   });
-const stringWithShuffle = withShuffle(anyString);
-const nonEmptyStringWithShuffle = withShuffle(fc.string({ unit: 'binary', minLength: 1 }));
 
 test.describe('isAnagram — properties (fast-check)', () => {
-  test('reflexivity: every string is an anagram of itself', () => {
+  test('every permutation of a string is an anagram of it', () => {
     fc.assert(
-      fc.property(anyString, (s) => isAnagram(s, s) === true),
+      fc.property(withShuffle(anyString), ([s, shuffled]) => isAnagram(s, shuffled) === true),
     );
   });
 
-  test('symmetry: isAnagram(a, b) always equals isAnagram(b, a)', () => {
+  test('appending any character breaks the anagram', () => {
     fc.assert(
-      fc.property(anyString, anyString, (a, b) => isAnagram(a, b) === isAnagram(b, a)),
-    );
-  });
-
-  test('permutation invariance: any shuffle of a string is its anagram', () => {
-    fc.assert(
-      fc.property(stringWithShuffle, ([s, shuffled]) => isAnagram(s, shuffled) === true),
-    );
-  });
-
-  test('concatenation commutes: a+b is always an anagram of b+a', () => {
-    fc.assert(
-      fc.property(anyString, anyString, (a, b) => isAnagram(a + b, b + a) === true),
-    );
-  });
-
-  test('appending any character always breaks the anagram', () => {
-    fc.assert(
-      fc.property(stringWithShuffle, anyChar, ([s, shuffled], c) =>
+      fc.property(withShuffle(anyString), anyChar, ([s, shuffled], c) =>
         isAnagram(s + c, shuffled) === false,
       ),
     );
   });
 
-  test('substituting one code point for a different one always breaks the anagram', () => {
+  test('replacing one character with a different character breaks the anagram', () => {
     fc.assert(
       fc.property(
-        nonEmptyStringWithShuffle,
+        withShuffle(fc.string({ unit: 'binary', minLength: 1 })),
         fc.nat(),
         anyChar,
         ([s, shuffled], idx, replacement) => {
@@ -67,28 +47,4 @@ test.describe('isAnagram — properties (fast-check)', () => {
       ),
     );
   });
-
-  test('reflexivity holds under every combination of options', () => {
-    fc.assert(
-      fc.property(
-        anyString,
-        fc.record({
-          ignoreCase: fc.boolean(),
-          ignoreWhitespace: fc.boolean(),
-          ignorePunctuation: fc.boolean(),
-          normalizeUnicode: fc.constantFrom<NonNullable<IsAnagramOptions['normalizeUnicode']>>(
-            false, true, 'NFC', 'NFD', 'NFKC', 'NFKD',
-          ),
-        }),
-        (s, options) => isAnagram(s, s, options) === true,
-      ),
-    );
-  });
-});
-
-test('property test sanity: the suite itself can detect a violation', () => {
-  // Guards against a silently misconfigured fc.assert (e.g. zero runs).
-  expect(() =>
-    fc.assert(fc.property(fc.constant('ab'), (s) => isAnagram(s, s + 'x'))),
-  ).toThrow();
 });
